@@ -2,43 +2,45 @@
 namespace frontend\models;
 
 use yii\base\Model;
-use backend\models\Password;
 use common\models\User;
 
+/**
+ * Signup form
+ */
 class SignupForm extends Model
 {
     public $username;
     public $email;
     public $password;
-    public $verifyCode;
 
+
+    /**
+     * @inheritdoc
+     */
     public function rules()
     {
         return [
-        ['username', 'trim'],
-        ['username', 'required'],
-        ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This username has already been taken.'],
-        ['username', 'string', 'min' => 2, 'max' => 255],
+            ['username', 'trim'],
+            ['username', 'required'],
+            ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This username has already been taken.'],
+            ['username', 'string', 'min' => 2, 'max' => 255],
 
-        ['email', 'trim'],
-        ['email', 'required'],
-        ['email', 'email'],
-        ['email', 'string', 'max' => 255],
-        ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This email address has already been taken.'],
+            ['email', 'trim'],
+            ['email', 'required'],
+            ['email', 'email'],
+            ['email', 'string', 'max' => 255],
+            ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This email address has already been taken.'],
 
-        ['password', 'required'],
-        ['password', 'string', 'min' => 6],
-        ['verifyCode', 'captcha'],
+            ['password', 'required'],
+            ['password', 'string', 'min' => 6],
         ];
     }
 
-    public function attributeLabels()
-    {
-        return [
-        'verifyCode' => 'Verification Code',
-        ];
-    }
-
+    /**
+     * Signs user up.
+     *
+     * @return User|null the saved model or null if saving fails
+     */
     public function signup()
     {
         if (!$this->validate()) {
@@ -50,20 +52,7 @@ class SignupForm extends Model
         $user->email = $this->email;
         $user->setPassword($this->password);
         $user->generateAuthKey();
-        $user->save(false);
-
-        // $pass = new Password();
-        // $pass->username = $this->username;
-        // $pass->password = $this->password;
-        // $pass->save(false);
-
-          // the following three lines were added:
-        $auth = \Yii::$app->authManager;
-        $authorRole = $auth->getRole('admin');
-        $auth->assign($authorRole, $user->getId());
-
-        return $user;
-
-        // return $user->save() ? $user : null;
+        
+        return $user->save() ? $user : null;
     }
 }

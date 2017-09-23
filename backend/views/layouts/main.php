@@ -1,5 +1,8 @@
 <?php
 
+/* @var $this \yii\web\View */
+/* @var $content string */
+
 use backend\assets\AppAsset;
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
@@ -8,100 +11,70 @@ use yii\widgets\Breadcrumbs;
 use common\widgets\Alert;
 
 AppAsset::register($this);
-$user = Yii::$app->user->id;
 ?>
-
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
-<meta name="robots" content="noindex, nofollow" />
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <?=Yii::$app->site->getIcon();?>
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
 </head>
 <body>
-    <?php $this->beginBody() ?>
+<?php $this->beginBody() ?>
 
-    <div class="wrap">
-        <?php
-        NavBar::begin([
-            'brandLabel' => '<span class="glyphicon glyphicon-home"></span>',
-            'brandUrl' => Yii::$app->homeUrl,
-            'options' => [
+<div class="wrap">
+    <?php
+    NavBar::begin([
+        'brandLabel' => 'My Company',
+        'brandUrl' => Yii::$app->homeUrl,
+        'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
-            ],
-            ]);
-       
-        if (Yii::$app->user->isGuest) {
-            // $menuItems[] = ['label' => '<span class="fa fa-sign-in"></span> Login', 'url' => ['/site/login']];
-            $menuItems[] = ['label' => '<span class="fa fa-user-plus"></span> Sign Up', 'url' => ['/site/signup']];
-        } else {
-             $menuItems = [
-        ['label' => '<span class="fa fa-id-card-o"></span> Info',
-            'items' => [
-                 ['label' => ' <span class="fa fa-user"></span> Profile', 'url' => ['/profile/index/']],
-                 '<li class="divider"></li>',
-                 ['label' => '<span class="fa fa-flag"></span> MetaTags', 'url' => ['/metatag/index/']],
-                 '<li class="divider"></li>',
-                 ['label' => '<span class="fa fa-pencil-square-o "></span> About', 'url' => ['/about/index']],
-            ],
         ],
-        ['label' => '<span class="glyphicon glyphicon-book"></span> Post',
-            'items' => [
-                 ['label' => ' <span class="fa fa-list-alt"></span> All Post', 'url' => ['/post/index']],
-                 '<li class="divider"></li>',
-                 ['label' => '<span class="glyphicon glyphicon-folder-open"></span> Category', 'url' => ['/category/index']],
-                 '<li class="divider"></li>',
-                 ['label' => '<span class="glyphicon glyphicon-tags"></span> Tags', 'url' => ['/tag/index']],
-            ],
-        ],
-        ['label' => '<span class="glyphicon glyphicon-wrench"></span> Advanced',
-            'items' => [
-                 ['label' => '<span class="fa fa-briefcase"></span> Settings', 'url' => ['/settings/settings']],
-                 '<li class="divider"></li>',
-                 ['label' => '<span class="fa fa-server"></span> Logs', 'url' => ['/logs/index']],
-                 '<li class="divider"></li>',
-                  ['label' => '<span class="fa fa-bar-chart"></span> Analytics', 'url' => ['/analytics/charts']],
-            ],
-        ],
-
-        ];
-            $menuItems[] = '<li>'
+    ]);
+    $menuItems = [
+        ['label' => 'Home', 'url' => ['/site/index']],
+    ];
+    if (Yii::$app->user->isGuest) {
+        $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
+    } else {
+        $menuItems[] = '<li>'
             . Html::beginForm(['/site/logout'], 'post')
             . Html::submitButton(
                 'Logout (' . Yii::$app->user->identity->username . ')',
                 ['class' => 'btn btn-link logout']
-                )
+            )
             . Html::endForm()
             . '</li>';
-        }
-        echo Nav::widget([
-            'options' => ['class' => 'navbar-nav navbar-right'],
-            'items' => $menuItems,
-            'encodeLabels' => false,
-            ]);
-        NavBar::end();
-        ?>
+    }
+    echo Nav::widget([
+        'options' => ['class' => 'navbar-nav navbar-right'],
+        'items' => $menuItems,
+    ]);
+    NavBar::end();
+    ?>
 
-        <div class="container">
-            <?= Breadcrumbs::widget([
-                'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-                ]) ?>
-                <?= Alert::widget() ?>
-                <?= $content ?>
-            </div>
-        </div>
-        
-        <!-- start footer -->
-        <?php $this->beginContent('@app/views/layouts/footer.php'); ?>
-        <?php $this->endContent(); ?>
-        <!-- end footer -->
-        
-        <?php $this->endBody() ?>
-    </body>
-    </html>
-    <?php $this->endPage() ?>
+    <div class="container">
+        <?= Breadcrumbs::widget([
+            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+        ]) ?>
+        <?= Alert::widget() ?>
+        <?= $content ?>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
+
+        <p class="pull-right"><?= Yii::powered() ?></p>
+    </div>
+</footer>
+
+<?php $this->endBody() ?>
+</body>
+</html>
+<?php $this->endPage() ?>

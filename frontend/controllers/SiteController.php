@@ -12,298 +12,202 @@ use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
-use frontend\models\Post;
-use frontend\models\PostSearch;
-// use frontend\components\Analytics;
-use yii\data\Pagination;
-use backend\models\Profile;
-use backend\models\Metatag;
-use kartik\growl\Growl;
 
+/**
+ * Site controller
+ */
 class SiteController extends Controller
 {
-	public function behaviors()
-	{
-        // Analytics::init();
-		return [
-		'access' => [
-		'class' => AccessControl::className(),
-		'only' => ['logout', 'signup','requestPasswordReset','resetPassword','contact'],
-		'rules' => [
-		[
-        'actions' => ['signup'],//allows without login
-        'allow' => false, //true for use singup
-        'roles' => ['?'],
-        ],
-        [
-        'actions' => ['logout'], //allow with login
-        'allow' => true,
-        'roles' => ['@'],
-        ],
-        ],
-        ],
-        'verbs' => [
-        'class' => VerbFilter::className(),
-        'actions' => [
-        'logout' => ['post'],
-        ],
-        ],
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['logout', 'signup'],
+                'rules' => [
+                    [
+                        'actions' => ['signup'],
+                        'allow' => true,
+                        'roles' => ['?'],
+                    ],
+                    [
+                        'actions' => ['logout'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'logout' => ['post'],
+                ],
+            ],
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function actions()
     {
-    	return [
-    	'error' => [
-    	'class' => 'yii\web\ErrorAction',
-    	],
-    	'captcha' => [
-    	'class' => 'yii\captcha\CaptchaAction',
-    	'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
-    	],
-    	];
+        return [
+            'error' => [
+                'class' => 'yii\web\ErrorAction',
+            ],
+            'captcha' => [
+                'class' => 'yii\captcha\CaptchaAction',
+                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+            ],
+        ];
     }
 
+    /**
+     * Displays homepage.
+     *
+     * @return mixed
+     */
     public function actionIndex()
     {
-    	$model = Post::find()->orderBy(['created_at'=>SORT_DESC])->limit(5)->all();
-    	return $this->render('index',[
-    		'model' => $model,
-            ]);
+        return $this->render('index');
     }
 
-    protected function findModel($id)
-    {
-    	if (($model = Post::findOne($id)) !== null) {
-    		return $model;
-    	} else {
-    		throw new NotFoundHttpException('The requested page does not exist.');
-    	}
-    }
-
+    /**
+     * Logs in a user.
+     *
+     * @return mixed
+     */
     public function actionLogin()
     {
-    	$profile = Profile::find()->orderBy('id ASC')->limit(1)->one();
-    	if (!is_null($profile)) {
-    		Growl::widget([
-    			'type' => Growl::TYPE_GROWL,
-    			'title' => 'Ups!',
-    			'icon' => "$profile->image",
-    			'iconOptions' => ['class'=>'img-ico'],
-    			'body' => '</br>Try again.',
-    			'showSeparator' => false,
-    			'delay' => 0,
-    			'pluginOptions' => [
-    			'icon_type'=>'image',
-    			'showProgressbar' => false,
-    			'placement' => [
-    			'from' => 'top',
-    			'align' => 'right',
-    			],
-    			]
-    			]);
-    	}
-    	return $this->redirect(['index']);
+        if (!Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $model = new LoginForm();
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            return $this->goBack();
+        } else {
+            return $this->render('login', [
+                'model' => $model,
+            ]);
+        }
     }
 
-    public function actionAdmin()
-    {
-    	$profile = Profile::find()->orderBy('id ASC')->limit(1)->one();
-    	if (!is_null($profile)) {
-    		Growl::widget([
-    			'type' => Growl::TYPE_GROWL,
-    			'title' => 'Ups!',
-    			'icon' => "$profile->image",
-    			'iconOptions' => ['class'=>'img-ico'],
-    			'body' => '</br>Try again.',
-    			'showSeparator' => false,
-    			'delay' => 0,
-    			'pluginOptions' => [
-    			'icon_type'=>'image',
-    			'showProgressbar' => false,
-    			'placement' => [
-    			'from' => 'top',
-    			'align' => 'right',
-    			],
-    			]
-    			]);
-    	}
-    	return $this->render('index');
-    }
-
+    /**
+     * Logs out the current user.
+     *
+     * @return mixed
+     */
     public function actionLogout()
     {
-    	Yii::$app->user->logout();
+        Yii::$app->user->logout();
 
-    	return $this->goHome();
+        return $this->goHome();
     }
 
+    /**
+     * Displays contact page.
+     *
+     * @return mixed
+     */
     public function actionContact()
     {
-    	$model = new ContactForm();
-    	if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-    		if ($model->sendEmail(Yii::$app->params['adminEmail'])) {
-    			Yii::$app->session->setFlash('success', 'Thank you for contacting us. We will respond to you as soon as possible.');
-    		} else {
-    			Yii::$app->session->setFlash('error', 'There was an error sending email.');
-    		}
+        $model = new ContactForm();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if ($model->sendEmail(Yii::$app->params['adminEmail'])) {
+                Yii::$app->session->setFlash('success', 'Thank you for contacting us. We will respond to you as soon as possible.');
+            } else {
+                Yii::$app->session->setFlash('error', 'There was an error sending your message.');
+            }
 
-    		return $this->refresh();
-    	} else {
-    		return $this->render('contact', [
-    			'model' => $model,
-    			]);
-    	}
+            return $this->refresh();
+        } else {
+            return $this->render('contact', [
+                'model' => $model,
+            ]);
+        }
     }
 
-    protected function ipUser(){
-    	$profile = profile::find()->orderBy('id ASC')->limit(1)->one();
-    	$ip = Yii::$app->getRequest()->getUserIP();
-    	if (!is_null($profile->ip) && $profile->ip == $ip) {
-    		return false;
-    	}else{
-    		return true;
-    	}
+    /**
+     * Displays about page.
+     *
+     * @return mixed
+     */
+    public function actionAbout()
+    {
+        return $this->render('about');
     }
 
-    protected function findAbout($var){
-    	$model = Post::find()->where(['type'=>$var])->andWhere(['status'=>1])
-    	->orderBy(['id'=>SORT_ASC])->limit(1)->one();
-
-    	if (!is_null($model)) {
-
-    		if($this->ipUser()){
-    			$model->count = $model->count + 1;
-    			$model->save(false);
-    		}
-
-    		return $model;
-    	}else{
-    		return null;
-    	} 
-    }
-
-    public function actionAbout(){
-    	$model = $this->findAbout('about');
-
-    	return $this->render('about', [
-    		'model' => $model,
-    		]);
-    }
-
-    public function actionPrivacy(){
-    	$model = $this->findAbout('privacy');
-
-    	return $this->render('privacy',[
-    		'model' => $model,
-    		]);
-    }
-
-    public function actionFeedback(){
-    	$model = $this->findAbout('feedback');
-
-    	return $this->render('feedback',[
-    		'model' => $model,
-    		]);
-    }
-
-    public function actionMe(){
-    	$model = Profile::find()->orderBy(['id'=>SORT_ASC])->limit(1)->one();
-
-    	return $this->render('me',[
-    		'model' => $model,
-    		]);
-    }
-
-    public function actionWpAdmin(){
-    	$profile = Profile::find()->orderBy('id ASC')->limit(1)->one();
-    	if (!is_null($profile)) {
-    		Growl::widget([
-    			'type' => Growl::TYPE_GROWL,
-    			'title' => 'Nope!',
-    			'icon' => "$profile->image",
-    			'iconOptions' => ['class'=>'img-ico'],
-    			'body' => '</br>Esto no es un WordPress.',
-    			'showSeparator' => false,
-    			'delay' => 0,
-    			'pluginOptions' => [
-    			'icon_type'=>'image',
-    			'showProgressbar' => false,
-    			'placement' => [
-    			'from' => 'top',
-    			'align' => 'right',
-    			],
-    			]
-    			]);
-    	}else{
-    		Yii::$app->session->setFlash('info','Esto no es un WordPress');
-    	}
-    	return $this->render('about');
-    }
-
+    /**
+     * Signs user up.
+     *
+     * @return mixed
+     */
     public function actionSignup()
     {
-    	$model = new SignupForm();
-    	if ($model->load(Yii::$app->request->post())) {
-    		if ($user = $model->signup()) {
-
-    			$profile = new Profile();
-    			$profile->id_user = $user->id;
-    			$profile->email = $user->email;
-    			$profile->save(false);
-
-    			$meta = new Metatag();
-    			$meta->id_user = $user->id;
-    			$meta->save(false);
-
-    			if (Yii::$app->getUser()->login($user)) {
+        $model = new SignupForm();
+        if ($model->load(Yii::$app->request->post())) {
+            if ($user = $model->signup()) {
+                if (Yii::$app->getUser()->login($user)) {
                     return $this->goHome();
-    				// return $this->redirect(['/admin']);
-    			}
-    		}
-    	}
+                }
+            }
+        }
 
-    	return $this->render('signup', [
-    		'model' => $model,
-    		]);
+        return $this->render('signup', [
+            'model' => $model,
+        ]);
     }
 
+    /**
+     * Requests password reset.
+     *
+     * @return mixed
+     */
     public function actionRequestPasswordReset()
     {
-    	$model = new PasswordResetRequestForm();
-    	if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-    		if ($model->sendEmail()) {
-    			Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
+        $model = new PasswordResetRequestForm();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if ($model->sendEmail()) {
+                Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
 
-    			return $this->goHome();
-    		} else {
-    			Yii::$app->session->setFlash('error', 'Sorry, we are unable to reset password for email provided.');
-    		}
-    	}
+                return $this->goHome();
+            } else {
+                Yii::$app->session->setFlash('error', 'Sorry, we are unable to reset password for the provided email address.');
+            }
+        }
 
-    	return $this->render('requestPasswordResetToken', [
-    		'model' => $model,
-    		]);
+        return $this->render('requestPasswordResetToken', [
+            'model' => $model,
+        ]);
     }
 
+    /**
+     * Resets password.
+     *
+     * @param string $token
+     * @return mixed
+     * @throws BadRequestHttpException
+     */
     public function actionResetPassword($token)
     {
-    	try {
-    		$model = new ResetPasswordForm($token);
-    	} catch (InvalidParamException $e) {
-    		throw new BadRequestHttpException($e->getMessage());
-    	}
+        try {
+            $model = new ResetPasswordForm($token);
+        } catch (InvalidParamException $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
 
-    	if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
-    		Yii::$app->session->setFlash('success', 'New password was saved.');
+        if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
+            Yii::$app->session->setFlash('success', 'New password saved.');
 
-    		return $this->goHome();
-    	}
+            return $this->goHome();
+        }
 
-    	return $this->render('resetPassword', [
-    		'model' => $model,
-    		]);
+        return $this->render('resetPassword', [
+            'model' => $model,
+        ]);
     }
-
-
 }

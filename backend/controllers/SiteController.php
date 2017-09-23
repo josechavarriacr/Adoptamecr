@@ -6,75 +6,68 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
-use backend\models\SignupForm;
-use backend\models\Profile;
-use backend\models\Metatag;
-use backend\models\Password;
-use frontend\components\Analytics;
 
+/**
+ * Site controller
+ */
 class SiteController extends Controller
 {
-
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
-        'access' => [
-        'class' => AccessControl::className(),
-        'rules' => [
-        [
-        'actions' => ['login', 'error','signup','captcha'],//actions without loggin
-        'allow' => true,
-        ],
-        [
-        'actions' => ['logout', 'index'],//action with login
-        'allow' => true,
-        'roles' => ['@'],
-        ],
-        ],
-        ],
-        'verbs' => [
-        'class' => VerbFilter::className(),
-        'actions' => [
-        'logout' => ['post'],
-        ],
-        ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'actions' => ['login', 'error'],
+                        'allow' => true,
+                    ],
+                    [
+                        'actions' => ['logout', 'index'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'logout' => ['post'],
+                ],
+            ],
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function actions()
     {
         return [
-        'error' => [
-        'class' => 'yii\web\ErrorAction',
-            ],
-        'captcha' => [
-                'class' => 'yii\captcha\CaptchaAction',
-                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+            'error' => [
+                'class' => 'yii\web\ErrorAction',
             ],
         ];
     }
 
+    /**
+     * Displays homepage.
+     *
+     * @return string
+     */
     public function actionIndex()
     {
         return $this->render('index');
     }
 
-    public function actionSignup()
-    {
-        $model = new SignupForm();
-        if ($model->load(Yii::$app->request->post())) {
-            if ($user = $model->signup()) {
-
-                if (Yii::$app->getUser()->login($user)) {
-                    return $this->goHome();
-                }
-            }
-        }
-
-        return $this->render('signup', [
-            'model' => $model,
-            ]);
-    }
+    /**
+     * Login action.
+     *
+     * @return string
+     */
     public function actionLogin()
     {
         if (!Yii::$app->user->isGuest) {
@@ -87,10 +80,15 @@ class SiteController extends Controller
         } else {
             return $this->render('login', [
                 'model' => $model,
-                ]);
+            ]);
         }
     }
 
+    /**
+     * Logout action.
+     *
+     * @return string
+     */
     public function actionLogout()
     {
         Yii::$app->user->logout();

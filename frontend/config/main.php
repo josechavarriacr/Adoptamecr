@@ -1,7 +1,4 @@
 <?php
-use \yii\web\Request;
-
-$baseUrl = str_replace('/frontend/web', '', (new Request)->getBaseUrl());
 $params = array_merge(
     require(__DIR__ . '/../../common/config/params.php'),
     require(__DIR__ . '/../../common/config/params-local.php'),
@@ -13,29 +10,11 @@ return [
     'id' => 'app-frontend',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
-    'language' =>'es',
     'controllerNamespace' => 'frontend\controllers',
-    'modules' => [
-        'social' => [
-            'class' => 'kartik\social\Module',
-                'disqus' => [
-                	'settings' => ['shortname' => 'DISQUS_SHORTNAME'] // default settings
-                        ],
-                'twitter' => [
-            		'screenName' => 'josechavarriacr'
-       					],
-       			'github' => [
-          			 'settings' => ['user'=>'josechavarriacr']
-        				],
-                    ],
-                ],
     'components' => [
         'request' => [
-            'baseUrl' => $baseUrl,
+            'csrfParam' => '_csrf-frontend',
         ],
-        // 'request' => [
-        //     'csrfParam' => '_csrf-frontend',
-        // ],
         'user' => [
             'identityClass' => 'common\models\User',
             'enableAutoLogin' => true,
@@ -57,40 +36,14 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        'sc' => [
-            'class' => 'frontend\components\SrcCollect',
-        ],
-        'meta' => [
-            'class' => 'frontend\components\MetaTagsPost',
-        ],
-        'site' => [
-            'class' => 'frontend\components\MetaTagsSite',
-        ],
+        
         'urlManager' => [
-        'class' => 'yii\web\UrlManager',
-        'showScriptName' => false,
-        'enablePrettyUrl' => true,
-        'rules' => array(
-            
-                '<action:(contact|login|signup|logout|index|privacy|wp-admin|admin|about|me|feedback)>'=>'site/<action>', //hide site directory
-                '<action:(rss)>' => 'post/<action>',//hide post directory
-
-                'post' => 'post/index',
-                'post/index' => 'post/index',
-                'post/create' => 'post/create',
-                'post/view/<id:\d+>' => 'post/view', 
-                'post/update/<id:\d+>' => 'post/update',  
-                'post/delete/<id:\d+>' => 'post/delete',  
-                'post/<url>' => 'post/url',
-
-                 
-                '<controller:\w+>/<id:\d+>' => '<controller>/view',//hide action ?view=
-                // '<controller:\w+>/<action:\w+>/<tag>' => '<controller>/<action>',//hide action ?tag=
-                '<controller:\w+>/<action:\w+>/<category>' => '<controller>/<action>',//hide action ?category=
-                '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
-                '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
-        ),
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+            'rules' => [
+            ],
         ],
+        
     ],
     'params' => $params,
 ];

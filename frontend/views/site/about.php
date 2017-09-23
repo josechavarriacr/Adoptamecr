@@ -1,18 +1,16 @@
+<?php
 
- <?php if (!is_null($model)):?>
+/* @var $this yii\web\View */
 
- 	<?php $this->title= $model->title;?>
- 	<code>Page generated on <?=Yii::$app->formatter->asDateTime(time(),'medium');?></code>
- 	<div class="row">
- 		<article class="blog">
- 			<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
- 				<p><span class="label label-success"><?=Yii::$app->formatter->asDate($model->created_at);?></span></p>
- 				<h1 class="heading"><?=$model->title;?></h1>
- 				<p><?=$model->text?></p>
- 			</div>
- 		</article>
- 	</div><hr>
- 	
- <?php endif; ?>
+use yii\helpers\Html;
 
+$this->title = 'About';
+$this->params['breadcrumbs'][] = $this->title;
+?>
+<div class="site-about">
+    <h1><?= Html::encode($this->title) ?></h1>
 
+    <p>This is the About page. You may modify the following file to customize its content:</p>
+
+    <code><?= __FILE__ ?></code>
+</div>

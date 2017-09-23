@@ -1,0 +1,41 @@
+List requirements
+* Animals
+* Persons
+* Adoptions
+* Find animals
+* Compains
+* Post
+* #Types of Animals
+* #Point of animal food recolection
+* #Groups
+* #Friends
+* #Interets
+* #locations
+
+## Animals
+* Id
+* Name
+* Race
+* Size
+* _location
+
+## Types of Animales
+* Id
+* Id_animals
+* Name
+* Description
+
+## Persons
+* id
+* name
+
+## Post
+* id
+* user
+* 
+
+* _location
+
+## Adoptions
+* id
+* 

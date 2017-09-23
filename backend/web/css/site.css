@@ -1,139 +1,8 @@
 html,
 body {
-    /*height: 100%;*/
-    font-family: sans-serif;
-    font-size: 16px;
-    line-height: 1.42857;
-    color: #333;
-    background-color: #fff;
+    height: 100%;
 }
 
-.blog {
-  font-family: 'Lora', 'Times New Roman', serif;
-  font-size: 20px;
-  line-height: 1.5;
-  margin: 30px 0;
-  color: #333333;
-}
-.heading {
-    text-align: center;
-    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    /*font-size: 36px;*/
-    margin-top: 60px;
-    font-weight: 700;
-}
-.title {
-    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    /*font-size: 36px;*/
-    margin-top: 60px;
-    font-weight: 700;
-}
-.category{
-    color: #31708f;
-    text-decoration: none;
-}
-.caption {
-    font-size: 14px;
-    padding: 10px;
-    font-style: italic;
-    margin: 0;
-    display: block;
-    border-bottom-right-radius: 5px;
-    border-bottom-left-radius: 5px;
-}
-blockquote {
-    color: #777;
-    font-style: italic;
-    padding: 10px 20px;
-    margin: 0 0 20px;
-    font-size: 17.5px;
-    border-left: 5px solid #eee;
-}
-.ratings {
-    padding-right: 10px;
-    padding-left: 10px;
-    color: #d17581;
-}
-img{
-    display: block;
-    max-width: 100%;
-    width: auto;
-    height: auto;
-}
-.img-circle{
-    align-content: center;
-    border-radius: 50%;
-    display: block;
-    width:250px;
-    height:230px;
-}
-.img-ico{
-    align-content: center;
-    border-radius: 50%;
-    display: block;
-    width:80px;
-    height:60px;
-}
-.img-rounded{
-  display: block;
-  max-width: auto;
-  width: auto;
-  height:300px;
-}
-.img-item{
-   display: block;
-   width:350px;
-   height:300px;
-}
-.img-center {
-    display: block;
-    margin-right: 50px;
-    margin-left: 150px;
-}
-.ico {
-    position: relative;
-    bottom: 6px;
-}
-
-.bs-docs-footer-links {
-    padding-left: 0;
-    margin-bottom: 20px;
-    word-spacing:10px;
-}
-.bs-docs-footer-links li {
-    display: inline-block;
-    margin-right: 15px;
-}
-
-/*Nav bar custom*/
-.navbar-custom {
-    background-color:#31708f;
-    color:#ffffff;
-    border-radius:0;
-}
-.navbar-custom .navbar-nav > li > a {
-    color:#fff;
-}
-.navbar-custom .navbar-nav > .active > a, .navbar-nav > .active > a:hover, .navbar-nav > .active > a:focus {
-    color: #ffffff;
-    background-color:transparent;
-}
-
-.navbar-custom .navbar-nav > li > a:hover, .nav > li > a:focus {
-    text-decoration: none;
-    background-color: #338aae;
-}
-
-.navbar-custom .navbar-brand {
-    color:#eeeeee;
-}
-.navbar-custom .navbar-toggle {
-    background-color:#eeeeee;
-}
-.navbar-custom .icon-bar {
-    background-color:#31708f;
-}
-/*end Nav bar custom*/
 .wrap {
     min-height: 100%;
     height: auto;
@@ -155,7 +24,6 @@ img{
 .jumbotron {
     text-align: center;
     background-color: transparent;
-    padding: 0px;
 }
 
 .jumbotron .btn {
@@ -181,11 +49,11 @@ a.asc:after, a.desc:after {
 }
 
 a.asc:after {
-    content: "\e151";
+    content: /*"\e113"*/ "\e151";
 }
 
 a.desc:after {
-    content: "\e152";
+    content: /*"\e114"*/ "\e152";
 }
 
 .sort-numerical a.asc:after {
