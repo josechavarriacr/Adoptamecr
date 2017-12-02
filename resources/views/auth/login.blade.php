@@ -18,9 +18,9 @@
 
             </div>
             @if (old('tab') != 'register' && $errors->has('email'))
-                <span class="help-block">
-                        <strong>{{ $errors->first('email') }}</strong>
-                    </span>
+            <span class="help-block">
+                <strong>{{ $errors->first('email') }}</strong>
+            </span>
             @endif
         </div>
 
@@ -35,9 +35,9 @@
 
             </div>
             @if (old('tab') != 'register' && $errors->has('password'))
-                <span class="help-block">
-                        <strong>{{ $errors->first('password') }}</strong>
-                    </span>
+            <span class="help-block">
+                <strong>{{ $errors->first('password') }}</strong>
+            </span>
             @endif
         </div>
 
