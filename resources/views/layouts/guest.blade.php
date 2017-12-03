@@ -36,7 +36,6 @@
                 <img src="{{ asset('images/guest_logo.png') }}" alt="" />
             </a>
         </div> -->
-
         <div class="col-md-6 col-lg-offset-3">
 
 
